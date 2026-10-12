@@ -4,11 +4,6 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      release_tag:
-        description: 'GitHub Release tag containing the .deb assets'
-        required: true
-        type: string
 
 permissions:
   contents: read
@@ -32,10 +27,18 @@ jobs:
       - name: Download Debian packages from the release
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
         run: |
           mkdir -p packages
-          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.deb' --dir packages --clobber
+          mapfile -t release_tags < <(gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
+            --jq '.[] | select(.draft == false and .prerelease == false) | .tag_name')
+          for release_tag in "${release_tags[@]}"; do
+            mapfile -t deb_assets < <(gh release view "$release_tag" --repo "$GITHUB_REPOSITORY" \
+              --json assets --jq '.assets[].name | select(endswith(".deb"))')
+            if ((${#deb_assets[@]} > 0)); then
+              gh release download "$release_tag" --repo "$GITHUB_REPOSITORY" \
+                --pattern '*.deb' --dir packages --clobber
+            fi
+          done
           test -n "$(find packages -maxdepth 1 -type f -name '*.deb' -print -quit)"
 
       - name: Configure Pages

@@ -160,7 +160,7 @@ GitHub’s web file editor limits individual files to 25 MB, so upload large `.d
 3. Attach the `.deb` files to the release.
 4. Publish the release.
 
-Publishing a release automatically starts the Pages workflow. It downloads all `*.deb` release assets, builds the APT metadata, signs the metadata, and deploys the result. The workflow can also be started manually with an existing release tag.
+Publishing a release automatically starts the Pages workflow. It downloads all `*.deb` assets from every published non-draft, non-prerelease release, so packages from older kernel releases remain available. It then rebuilds the APT metadata, signs it, and deploys the result. The workflow can also be started manually to rebuild the repository after changing release assets.
 
 ## Repository maintainer setup
 
