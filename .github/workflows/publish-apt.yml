@@ -1,6 +1,11 @@
 name: Publish Debian 13 APT repository
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build-apt-repo.sh'
+      - '.github/workflows/publish-apt.yml'
   release:
     types: [published]
   workflow_dispatch:
