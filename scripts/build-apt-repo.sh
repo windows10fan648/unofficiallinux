@@ -15,7 +15,6 @@ rm -rf "$output_dir"
 mkdir -p "$output_dir/pool/main" "$output_dir/dists/trixie/main/binary-amd64" "$output_dir/dists/trixie/main/binary-all"
 cp "${debs[@]}" "$output_dir/pool/main/"
 
-# Generate package indexes for both amd64 and architecture-independent clients.
 dpkg-scanpackages --multiversion "$output_dir/pool/main" /dev/null \
   | gzip -9n > "$output_dir/dists/trixie/main/binary-amd64/Packages.gz"
 cp "$output_dir/dists/trixie/main/binary-amd64/Packages.gz" \
@@ -48,9 +47,14 @@ if [[ -z "$key_id" ]]; then
   exit 1
 fi
 
-gpg --batch --yes --homedir "$tmp_home" --local-user "$key_id" --armor \
+sign_args=(--batch --yes --pinentry-mode loopback --homedir "$tmp_home" --local-user "$key_id")
+if [[ -n "${APT_GPG_PASSPHRASE:-}" ]]; then
+  sign_args+=(--passphrase "$APT_GPG_PASSPHRASE")
+fi
+
+gpg "${sign_args[@]}" --armor \
   --detach-sign --output "$output_dir/dists/trixie/Release.gpg" "$output_dir/dists/trixie/Release"
-gpg --batch --yes --homedir "$tmp_home" --local-user "$key_id" --clearsign \
+gpg "${sign_args[@]}" --clearsign \
   --output "$output_dir/dists/trixie/InRelease" "$output_dir/dists/trixie/Release"
 
 cat > "$output_dir/index.html" <<'HTML'
