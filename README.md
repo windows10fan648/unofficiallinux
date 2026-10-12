@@ -63,11 +63,11 @@ APT should report the `unofficiallinux` repository without a missing-key or unsi
 
 ### 5. Search and install packages
 
-List packages provided by this repository:
+The package names do not contain `unofficiallinux`, so search for the exact package names or inspect their APT candidates:
 
 ```bash
-apt-cache search unofficiallinux
 apt-cache policy linux-image-7.2.9 linux-headers-7.2.9 linux-libc-dev
+apt list --all-versions linux-image-7.2.9 linux-headers-7.2.9 linux-libc-dev 2>/dev/null
 ```
 
 Install the published kernel packages:
@@ -138,6 +138,14 @@ deb [arch=amd64 signed-by=/etc/apt/keyrings/unofficiallinux.gpg] https://windows
 Then run:
 
 ```bash
+sudo apt update
+```
+
+If you removed the source file while troubleshooting, add it again before searching for packages:
+
+```bash
+echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/unofficiallinux.gpg] https://windows10fan648.github.io/unofficiallinux trixie main' \
+  | sudo tee /etc/apt/sources.list.d/unofficiallinux.list
 sudo apt update
 ```
 
