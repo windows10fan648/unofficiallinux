@@ -32,7 +32,7 @@ Components: main
 Description: unofficiallinux packages for Debian 13
 RELEASE
 apt-ftparchive release "$output_dir/dists/trixie" \
-  | sed -e '1,/^Date:/d' >> "$output_dir/dists/trixie/Release"
+  >> "$output_dir/dists/trixie/Release"
 
 if [[ -z "${APT_GPG_PRIVATE_KEY:-}" ]]; then
   echo "APT_GPG_PRIVATE_KEY is required to sign the repository Release file." >&2
