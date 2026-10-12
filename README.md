@@ -2,15 +2,16 @@
 
 This repository publishes Debian 13 (**trixie**) packages through GitHub Pages.
 
-## Add a package
+## Publish a package
 
-Place one or more Debian packages in [`packages/`](packages/) and push them to `main`:
+GitHub’s web file editor limits individual files to 25 MB, so upload large `.deb` files as **assets on a GitHub Release** instead of committing them to the repository:
 
-```text
-packages/linux_7.2.9_amd64.deb
-```
+1. Open [Releases](https://github.com/windows10fan648/unofficiallinux/releases/new).
+2. Create a tag such as `v7.2.9`.
+3. Attach the `.deb` file(s) to the release.
+4. Publish the release.
 
-The workflow builds `Packages.gz`, `Release`, `Release.gpg`, and `InRelease`, then deploys them to GitHub Pages.
+Publishing a release automatically starts the Pages workflow. It downloads all `*.deb` release assets, builds the APT metadata, and deploys the result. You can also run the workflow manually and provide an existing release tag.
 
 ## Configure signing
 
@@ -24,7 +25,7 @@ Never commit the private key.
 
 ## Configure GitHub Pages
 
-In the repository settings, set **Pages → Build and deployment → Source** to **GitHub Actions**. The first workflow run will deploy the site at:
+In the repository settings, set **Pages → Build and deployment → Source** to **GitHub Actions**. The site will be deployed at:
 
 ```text
 https://windows10fan648.github.io/unofficiallinux/
