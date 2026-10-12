@@ -15,8 +15,10 @@ rm -rf "$output_dir"
 mkdir -p "$output_dir/pool/main" "$output_dir/dists/trixie/main/binary-amd64" "$output_dir/dists/trixie/main/binary-all"
 cp "${debs[@]}" "$output_dir/pool/main/"
 
-dpkg-scanpackages --multiversion "$output_dir/pool/main" /dev/null \
-  | gzip -9n > "$output_dir/dists/trixie/main/binary-amd64/Packages.gz"
+pushd "$output_dir" >/dev/null
+dpkg-scanpackages --multiversion pool/main /dev/null \
+  | gzip -9n > dists/trixie/main/binary-amd64/Packages.gz
+popd >/dev/null
 cp "$output_dir/dists/trixie/main/binary-amd64/Packages.gz" \
   "$output_dir/dists/trixie/main/binary-all/Packages.gz"
 
